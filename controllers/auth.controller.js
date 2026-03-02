@@ -1,5 +1,5 @@
 import User from '../models/user.model.js';
-import { hashPassword } from '../utils/passwordHash.js';
+import { hashPassword, comparePassword } from '../utils/passwordHash.js';
 import { generateToken } from '../utils/jwt.js';
 
 export const register = async (req, res) => {
@@ -37,6 +37,39 @@ export const register = async (req, res) => {
 
   } catch (error) {
     console.error('Error during registration:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    const isPasswordValid = await comparePassword(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    const token = generateToken({ id: user._id });
+
+    return res.status(200).json({ 
+      message: 'Login successful',
+      user:{
+        id: user._id,
+        username: user.username,
+        name: user.name,
+        email: user.email
+      },
+      token
+     });
+
+  } catch (error) {
+    console.error('Error during login:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };

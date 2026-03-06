@@ -1,9 +1,16 @@
 import express from "express";
 import healthRoute from './routes/health.route.js';
 import authRoute from './routes/auth.route.js';
+import cors from 'cors';
 
 const app = express();
 
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.use('/api/health', healthRoute);

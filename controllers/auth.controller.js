@@ -6,6 +6,10 @@ export const register = async (req, res) => {
   try {
     const { username, name, email, password } = req.body;
 
+    if (!username || !name || !email || !password) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
       return res.status(400).json({ 
@@ -44,6 +48,10 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
 
     const user = await User.findOne({ email });
     if (!user) {

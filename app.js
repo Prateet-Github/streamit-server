@@ -1,6 +1,7 @@
 import express from "express";
 import healthRoute from './routes/health.route.js';
 import authRoute from './routes/auth.route.js';
+import videoUrlRoute from './routes/video-url.route.js';
 import cors from 'cors';
 
 const app = express();
@@ -15,5 +16,6 @@ app.use(express.json());
 
 app.use('/api/health', healthRoute);
 app.use('/api/auth', authRoute);
+app.use('/api/video', videoUrlRoute);
 
 export default app;

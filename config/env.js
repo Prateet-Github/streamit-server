@@ -7,13 +7,19 @@ const env ={
   NODE_ENV: process.env.NODE_ENV,
   MONGODB_URI: process.env.MONGODB_URI,
   JWT_SECRET: process.env.JWT_SECRET,
+  AWS_REGION: process.env.AWS_REGION,
+  AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
+  AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
 }
 
 const requiredVars =[
   'PORT',
   "NODE_ENV",
   "MONGODB_URI",
-  "JWT_SECRET"
+  "JWT_SECRET",
+  "AWS_REGION",
+  "AWS_ACCESS_KEY_ID",
+  "AWS_SECRET_ACCESS_KEY",
 ];
 
 requiredVars.forEach((key) => {

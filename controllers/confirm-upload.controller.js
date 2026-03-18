@@ -1,11 +1,11 @@
 import {Video} from '../models/video.model.js';
+import { videoQueue } from '../queues/video.queue.js';
 
 export const confirmUpload = async (req, res) => {
   try {
     const {title, description , s3Key} = req.body;
 
-
-    if (!title || !s3Key) {
+    if (!title || !description || !s3Key) {
       return res.status(400).json({ error: 'Title, description, and s3Key are required' });
     }
 
@@ -19,8 +19,13 @@ export const confirmUpload = async (req, res) => {
 
     console.log("USER:", req.user);
 
-    // Next step to work on: Add video to processing queue
-    // await queue.add("encode-video", { videoId: video._id });
+    // add video processing jobs to the queue
+      const job = await videoQueue.add('process-video', {
+        videoId: newVideo._id,
+        s3Key: newVideo.s3Key
+      });
+
+      console.log(`Added job ${job.id} to process video ${newVideo._id}`);
 
     res.status(201).json({
       message: 'Upload confirmed, video is pending processing',

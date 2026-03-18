@@ -12,6 +12,8 @@ const env ={
   AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
   S3_RAW_BUCKET: process.env.S3_RAW_BUCKET,
   S3_PROD_BUCKET: process.env.S3_PROD_BUCKET,
+  REDIS_HOST: process.env.REDIS_HOST,
+  REDIS_PORT: process.env.REDIS_PORT
 }
 
 const requiredVars =[
@@ -23,7 +25,9 @@ const requiredVars =[
   "AWS_ACCESS_KEY_ID",
   "AWS_SECRET_ACCESS_KEY",
   "S3_RAW_BUCKET",
-  "S3_PROD_BUCKET"
+  "S3_PROD_BUCKET",
+  "REDIS_HOST",
+  "REDIS_PORT"
 ];
 
 requiredVars.forEach((key) => {

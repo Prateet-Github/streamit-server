@@ -4,6 +4,7 @@ import authRoute from './routes/auth.route.js';
 import videoUrlRoute from './routes/video-url.route.js';
 import confirmUploadRoute from './routes/confirm-upload.route.js';
 import updateStatusRoute from './routes/update-status.route.js';
+import videoRoute from './routes/video.route.js';
 import cors from 'cors';
 
 const app = express();
@@ -21,5 +22,6 @@ app.use('/api/auth', authRoute);
 app.use('/api/video', videoUrlRoute);
 app.use('/api/video', confirmUploadRoute);
 app.use('/api/video', updateStatusRoute);
+app.use('/api/video', videoRoute);
 
 export default app;

@@ -23,3 +23,19 @@ export const getVideoById = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const getAllVideos = async (req, res) => {
+  try {
+    const videos = await Video.find({
+      status: "COMPLETED",
+      visibility: "PUBLIC",
+    })
+      .sort({ createdAt: -1 })
+      .select("title thumbnailKey hlsUrl createdAt");
+
+    res.json(videos);
+  } catch (error) {
+    console.error("Get videos error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

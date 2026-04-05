@@ -4,7 +4,10 @@ export const getVideoById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const video = await Video.findById(id);
+    const video = await Video.findById(id).populate(
+      "owner",
+      "name username email"
+    );
 
     if (!video) {
       return res.status(404).json({ message: "Video not found" });
@@ -17,6 +20,14 @@ export const getVideoById = async (req, res) => {
       hlsUrl: video.hlsUrl,
       thumbnailKey: video.thumbnailKey,
       status: video.status,
+      owner: video.owner
+        ? {
+            id: video.owner._id,
+            name: video.owner.name,
+            username: video.owner.username,
+            email: video.owner.email,
+          }
+        : null,
     });
   } catch (error) {
     console.error("Get video error:", error);
@@ -31,11 +42,58 @@ export const getAllVideos = async (req, res) => {
       visibility: "PUBLIC",
     })
       .sort({ createdAt: -1 })
-      .select("title thumbnailKey hlsUrl createdAt");
+      .select("title thumbnailKey hlsUrl createdAt views owner")
+      .populate("owner", "name username email"); 
 
-    res.json(videos);
+    const formatted = videos.map((video) => ({
+      _id: video._id,
+      title: video.title,
+      thumbnailKey: video.thumbnailKey,
+      hlsUrl: video.hlsUrl,
+      createdAt: video.createdAt,
+      views: video.views,
+      owner: video.owner
+        ? {
+            id: video.owner._id,
+            name: video.owner.name,
+            username: video.owner.username,
+            email: video.owner.email,
+          }
+        : null,
+    }));
+
+    res.json(formatted);
   } catch (error) {
     console.error("Get videos error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getMyVideos = async (req, res) => {
+  try {
+    const userId = req.user.id; 
+
+    const videos = await Video.find({
+      owner: userId,
+    })
+      .sort({ createdAt: -1 })
+      .select(
+        "title thumbnailKey hlsUrl status views createdAt"
+      );
+
+    const formatted = videos.map((video) => ({
+      _id: video._id,
+      title: video.title,
+      thumbnailKey: video.thumbnailKey,
+      hlsUrl: video.hlsUrl,
+      status: video.status,
+      views: video.views,
+      createdAt: video.createdAt,
+    }));
+
+    res.json(formatted);
+  } catch (error) {
+    console.error("Get my videos error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

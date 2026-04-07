@@ -97,3 +97,27 @@ export const getMyVideos = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const searchVideos = async (req, res) => {
+  try {
+    const { q } = req.query;
+
+    if (!q) {
+      return res.status(400).json({ message: "Query is required" });
+    }
+
+    const videos = await Video.find({
+      title: { $regex: q, $options: "i" },
+      status: "COMPLETED",
+      visibility: "PUBLIC",
+    })
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .select("title thumbnailKey createdAt views owner");
+
+    res.json(videos);
+  } catch (error) {
+    console.error("Search error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

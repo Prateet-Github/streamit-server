@@ -4,6 +4,7 @@ import { getAllVideos } from "../controllers/video.controller.js";
 import { getMyVideos } from "../controllers/video.controller.js";
 import { protect } from "../middlewares/auth.middleware.js";
 import { searchVideos } from "../controllers/video.controller.js";
+import { deleteVideo } from "../controllers/video.controller.js";
 
 const router = Router();
 
@@ -12,5 +13,6 @@ router.get("/my-videos", protect, getMyVideos); // specific
 router.get("/search", searchVideos);            // search
 router.get("/", getAllVideos);                  // root
 router.get("/:id", getVideoById);               // dynamic last
+router.delete("/:id", protect, deleteVideo);      // delete video
 
 export default router;

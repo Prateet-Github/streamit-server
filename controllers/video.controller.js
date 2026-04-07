@@ -121,3 +121,27 @@ export const searchVideos = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const deleteVideo = async (req, res) => {
+  try {
+
+  const {id} = req.params;
+    
+  const video = await Video.findById(id);
+
+    if(!video){
+      return res.status(404).json({ message: "Video not found" });
+    }
+
+    if(video.owner.toString() !== req.user.id){
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+  await Video.findByIdAndDelete(id); 
+
+  res.json({message:"Video deleted successfully"})    
+  } catch (error) {
+    console.error("Delete error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

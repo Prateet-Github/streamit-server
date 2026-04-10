@@ -5,7 +5,7 @@ import connectDb from "./config/db.js";
 const startServer = async() => {
 try {
 
-  connectDb();
+  await connectDb();
 
   const server = app.listen(env.PORT,() => {
     console.log(`Server running in ${env.NODE_ENV} mode on port ${env.PORT}`)
@@ -15,7 +15,6 @@ try {
     console.error("Server startup error:", error);
     process.exit(1);
   });
-
 
 } catch (error) {
   console.error("Unexpected startup error:", error);

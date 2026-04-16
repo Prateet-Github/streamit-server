@@ -49,3 +49,33 @@ export const toggleLike = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const getLikeData = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    const { videoId } = req.params;
+
+    const video = await Video.findById(videoId).select("likesCount");
+
+    if (!video) {
+      return res.status(404).json({ message: "Video not found" });
+    }
+
+    let liked = false;
+
+    if (userId) {
+      liked = await Like.exists({
+        user: userId,
+        video: videoId,
+      });
+    }
+
+    res.json({
+      likesCount: video.likesCount,
+      liked: !!liked,
+    });
+  } catch (error) {
+    console.error("Like data error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

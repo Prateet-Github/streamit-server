@@ -62,3 +62,46 @@ export const createComment = async (req, res) => {
     res.status(500).json({ error: "Failed to create comment" });
   }
 };
+
+export const getCommentsByVideo = async (req, res) => {
+  try {
+    const { videoId } = req.params;
+
+    // pagination
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    if (!mongoose.Types.ObjectId.isValid(videoId)) {
+      return res.status(400).json({ message: "Invalid video ID" });
+    }
+
+    const skip = (page - 1) * limit;
+
+    // fetch top-level comments
+    const comments = await Comment.find({
+      video: videoId,
+      parentComment: null,
+    })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate("user", "name username");
+
+    // total count (for pagination)
+    const total = await Comment.countDocuments({
+      video: videoId,
+      parentComment: null,
+    });
+
+    res.json({
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+      comments,
+    });
+  } catch (error) {
+    console.error("Get comments error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

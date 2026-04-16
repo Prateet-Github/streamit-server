@@ -105,3 +105,42 @@ export const getCommentsByVideo = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const getReplies = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+
+    // pagination
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+
+    if (!mongoose.Types.ObjectId.isValid(commentId)) {
+      return res.status(400).json({ message: "Invalid comment ID" });
+    }
+
+    const skip = (page - 1) * limit;
+
+    const replies = await Comment.find({
+      parentComment: commentId,
+    })
+      .sort({ createdAt: 1 }) // oldest first for replies
+      .skip(skip)
+      .limit(limit)
+      .populate("user", "name username");
+
+    const total = await Comment.countDocuments({
+      parentComment: commentId,
+    });
+
+    res.json({
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+      replies,
+    });
+  } catch (error) {
+    console.error("Get replies error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

@@ -41,3 +41,37 @@ export const subscribe = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const getSubscriptionStatus = async (req, res) => {
+  try {
+    const userId = req.user ? req.user.id : null;
+    const { channelId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(channelId)) {
+      return res.status(400).json({ message: "Invalid channel ID" });
+    }
+
+    const subscribersCount = await Subscription.countDocuments({
+      channel: channelId,
+    });
+
+    let isSubscribed = false;
+
+    if (userId) {
+      const existing = await Subscription.findOne({
+        subscriber: userId,
+        channel: channelId,
+      });
+
+      isSubscribed = !!existing;
+    }
+
+    res.status(200).json({
+      isSubscribed,
+      subscribersCount,
+    });
+  } catch (error) {
+    console.error("Get subscription status error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

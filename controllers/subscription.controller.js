@@ -51,6 +51,8 @@ export const getSubscriptionStatus = async (req, res) => {
       return res.status(400).json({ message: "Invalid channel ID" });
     }
 
+    // TODO: Optimize by using aggregation to get both isSubscribed and subscribersCount in one query
+
     const subscribersCount = await Subscription.countDocuments({
       channel: channelId,
     });
@@ -75,3 +77,4 @@ export const getSubscriptionStatus = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+

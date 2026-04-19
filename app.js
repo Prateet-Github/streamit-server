@@ -8,6 +8,7 @@ import videoRoute from "./routes/video.route.js";
 import likeRoute from "./routes/like.route.js";
 import commentRoute from "./routes/comment.route.js";
 import subscriptionRoute from "./routes/subscription.route.js";
+import channelRoute from "./routes/channel.route.js";
 import cors from "cors";
 
 const app = express();
@@ -28,5 +29,7 @@ app.use("/api/video", updateStatusRoute);
 app.use("/api/video", videoRoute);
 app.use("/api/like", likeRoute);
 app.use("/api/comment", commentRoute);
+app.use("/api/channel", channelRoute);
 app.use("/api/subscription", subscriptionRoute);
+
 export default app;
